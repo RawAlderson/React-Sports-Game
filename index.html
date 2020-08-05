@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React Sports Game</title>
+</head>
+<body>
+    <!-- include an element for ReactDOM to attach our React-generated elements to -->
+    <div id="root"></div>
+
+    <!-- include React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <!-- include Babel standalone so we can process JSX in React.createElement stuff -->
+    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <!-- include our JS+JSX for the React Appliccation -->
+<script type="text/babel">
+
+// An App component under which all other components will be added
+class Team extends React.Component {
+        constructor (props) {
+            super(props)
+            
+            this.state = {
+              shots: 0,
+              score: 0
+            }
+
+            this.scoredAudio = new Audio("./audio/score.wav")
+            this.missedAudio = new Audio("./audio/missed.wav")
+              
+              this.handleShoot = this.handleShoot.bind(this)
+            }
+
+
+        handleShoot (event) {
+          let score = this.state.score
+          if (Math.round(Math.random()) > .5) {
+            score += 1
+            this.scoredAudio.play()
+          } else {this.missedAudio.play()}
+          this.setState((state, props) => ({
+            shots: state.shots + 1,
+            score
+          }))
+        }
+
+        render () {
+          // Got this from Davey, I couldn't make the shot % invisible till needed myself
+          let shotPercentageDiv
+          if (this.state.shots) {
+            const shotPercentage = Math.round((this.state.score / this.state.shots) * 100)
+            shotPercentageDiv = (
+              <div>Shot Percentage: {shotPercentage}%</div>
+            )
+          }
+
+          return (
+          
+            <div>
+              <h1>{this.props.name}</h1>
+              <img src={this.props.logo} alt="Team Logo"/>
+              <h4>Shots Taken: {this.state.shots} </h4>
+              <h4>Score: {this.state.score} </h4>
+              {shotPercentageDiv}
+              <button onClick={this.handleShoot}>Shoot!</button>
+            </div>
+            )
+        }
+      }
+
+function Game (props) {
+  return (
+    <div>
+      <h1>Welcome to {props.venue}</h1>
+    <Team name="Home Team" logo="images\6c012d63f46187ab304847a19a89228b.jpg"/>
+    <Team name="Visiting Team" logo="images\749afe734cc73fdcb3316d2dfab89c98.jpg"/>
+    </div>  
+  )
+}
+
+function App (props) {
+  return (
+    <div>
+      <Game venue="Pokemon Center, NY"/>
+    </div>
+  )
+}
+
+
+
+// Render the App
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+)
+</script>
+</body>
+</html>
